@@ -63,9 +63,10 @@ For the purpose of this assignment, it can be assumed that the service and Docke
         cd dockerfile_publisher
         python manage.py runserver
     ```
-    2.2. Run celery worker to process asynchronous tasks 
+    2.2. Run celery worker in another Terminal to process asynchronous tasks 
     ``` bash
     cd dockerfile_publisher
+    source ./venv/bin/activate
     celery -A dockerfile_publisher.celery worker -l info  
     ```
     2.3. Make sure Redis is running.
