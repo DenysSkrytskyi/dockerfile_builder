@@ -36,42 +36,42 @@ For the purpose of this assignment, it can be assumed that the service and Docke
 
 2. Update configurations to your docker hub repo in file ```dockerfile_publisher/rest_api/config.py``` 
 
-``` bash
-DOCKER_HUB_REPO = "your_docker_hub_repo"
-```
+    ``` bash
+    DOCKER_HUB_REPO = "your_docker_hub_repo"
+    ```
 
 #### Steps to RUN the project
 
 1. Create and activate virtual environment. Install ```requirments.txt``` .
-``` bash
-python -m venv venv
-source ./venv/bin/activate
-pip install -r requirments.txt 
-```
+    ``` bash
+    python -m venv venv
+    source ./venv/bin/activate
+    pip install -r requirments.txt 
+    ```
 
 2. Run RESTful service.
 
-2.0. Make migrations.
-``` bash
-    cd dockerfile_publisher
-    python manage.py makemigrations
-    python manage.py migrate     
-```
+    2.0. Make migrations.
+    ``` bash
+        cd dockerfile_publisher
+        python manage.py makemigrations
+        python manage.py migrate     
+    ```
 
-2.1. Run Django server
-``` bash
-cd dockerfile_publisher
-python manage.py runserver
-```
-2.2. Run celery worker to process asynchronous tasks 
-``` bash
-cd dockerfile_publisher
-celery -A dockerfile_publisher.celery worker -l info  
-```
-2.3. Make sure Redis is running. Redis is a message broker. 
-``` bash
-redis-server
-```
+    2.1. Run Django server
+    ``` bash
+        cd dockerfile_publisher
+        python manage.py runserver
+    ```
+    2.2. Run celery worker to process asynchronous tasks 
+    ``` bash
+    cd dockerfile_publisher
+    celery -A dockerfile_publisher.celery worker -l info  
+    ```
+    2.3. Make sure Redis is running.
+    ``` bash
+    redis-server
+    ```
 
 
 ## Architecture
@@ -84,19 +84,20 @@ redis-server
 There are 4 HTTP requests:
 
 1. Main functionlity of buildinf image and pushing is under POST ```api/dockerfile-build``` request. Payload must have ```username``` and ```file```
-```bash 
-curl -X POST \
-  http://127.0.0.1:8000/api/dockerfile-build/ \
-  -H 'Content-Type: multipart/form-data' \
-  -F 'username=your_username' \
-  -F 'file=@path/to/your/Dockerfile'
+    ```bash 
+    curl -X POST \
+    http://127.0.0.1:8000/api/dockerfile-build/ \
+    -H 'Content-Type: multipart/form-data' \
+    -F 'username=your_username' \
+    -F 'file=@path/to/your/Dockerfile'
 
-```
+    ```
 
 2. There are 2 GET requests:
-2.1 ```GET api/dockerfile-build/``` to get list of dockerfile builds.
 
-2.2 ```GET /api/dockerfile-build/?dockerfile_build_id=:id```` to get specific dockerfile build details. Useful to check Status.
+    2.1 ```GET api/dockerfile-build/``` to get list of dockerfile builds.
+
+    2.2 ```GET /api/dockerfile-build/?dockerfile_build_id=:id```` to get specific dockerfile build details. Useful to check Status.
 
 3. ```DELETE /dockerfile-build/?dockerfile_build_id=:id``` to delete Dockerfile from server, to delete 'buiild details' from database and to delete Docker Image.
 
