@@ -1,0 +1,8 @@
+venv/
+dockerfile_publisher/db.sqlite3
+dockerfile_publisher/dockerfile_publisher/_pychache__/
+dockerfile_publisher/dockerfile_publisher/dockerfiles/
+dockerfile_publisher/rest_api/__pycache__/
+dockerfile_publisher/rest_api/migrations/
+dockerfile_publisher/rest_api/services/__pycache__/
+*.pyc
