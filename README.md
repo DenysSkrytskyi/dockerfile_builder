@@ -42,11 +42,11 @@ For the purpose of this assignment, it can be assumed that the service and Docke
 
 #### Steps to RUN the project
 
-1. Create and activate virtual environment. Install ```requirments.txt``` .
+1. Create and activate virtual environment. Install ```requirements.txt``` .
     ``` bash
     python -m venv venv
     source ./venv/bin/activate
-    pip install -r requirments.txt 
+    pip install -r requirements.txt
     ```
 
 2. Run RESTful service.
