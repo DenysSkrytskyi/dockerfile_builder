@@ -14,6 +14,8 @@ class TestViews(TestCase):
 
         self.client = Client()
         self.dockerfile_build_url =reverse('dockerfile-build')
+        # create test data in test database
+        DockerfileBuild.objects.create(username="usertest999", file="/dockerfiles/Dockerfile_denys677_20231123011442")
 
 
     def test_GET_list_dockerfile_builds(self):
@@ -21,10 +23,15 @@ class TestViews(TestCase):
         response = self.client.get(self.dockerfile_build_url)
         self.assertEqual(response.status_code, 200)
 
-    def test_GET_dockerfile_builds_by_id(self):  
+        #assert response content
+        json_data = response.json()
 
-        # create test data in test database
-        DockerfileBuild.objects.create(username="usertest999", file="/dockerfiles/Dockerfile_denys677_20231123011442")
+        self.assertEqual(json_data['data'][0]['username'], "usertest999")
+        self.assertEqual(json_data['data'][0]['file'], "/dockerfiles/Dockerfile_denys677_20231123011442")
+        self.assertEqual(json_data['data'][0]['status'], "Stored locally")
+
+
+    def test_GET_dockerfile_builds_by_id(self):  
 
         response = self.client.get(f"{self.dockerfile_build_url}?dockerfile_build_id=1")
         self.assertEqual(response.status_code, 200)

@@ -16,32 +16,52 @@ from .models import DockerfileBuild
 @api_view(["POST","GET","DELETE"])
 def dockerfile_builds(request):
 
+    print("test")
+
     if request.method == "POST":
 
         if request.headers["Content-Type"].split(';')[0] == "multipart/form-data":
 
-            # Map payload to Serializer
-            instance = DockerfileBuildSerializer(data=request.data)
+            # Extract username and password from the request data
+            docker_username = request.data.get('docker_username')
+            docker_password = request.data.get('docker_password')
+            exclude_password_keys = ['docker_password', 'password']
 
-            if instance.is_valid():
+            print(docker_username)
+            print(docker_password)
 
-                # Save initial data to Database with file and username from payload
-                saved_instance=instance.save()
-                
-                # Update status in database
-                saved_instance.status = "Build is starting"
-                saved_instance.save() 
+            payload_no_pass={}
+            for key, val in request.data.items():
+                if key  not in exclude_password_keys:
+                    payload_no_pass[key] = val
 
-                # Chain the tasks: 1st building docker image, 2nd publishing docker image
-                task_chain = chain(build_docker_image.s(saved_instance.file.path, saved_instance.id) | publish_docker_image.s())
+            print(payload_no_pass)
+            if docker_username and docker_password:
 
-                # Execute the chained tasks asynchronously
-                result = task_chain.delay()
+                # Map payload to Serializer
+                instance = DockerfileBuildSerializer(data=payload_no_pass)
 
-                return Response({"data": DockerfileBuildSerializer(saved_instance).data },status=202)
+                if instance.is_valid():
 
+                    # Save initial data to Database with file and username from payload
+                    saved_instance = instance.save()
+                    
+                    # Update status in database
+                    saved_instance.status = "Build is starting"
+                    saved_instance.save() 
+
+                    # Chain the tasks: 1st building docker image, 2nd publishing docker image
+                    task_chain = chain(build_docker_image.s(saved_instance.file.path, saved_instance.id, docker_username,docker_password, saved_instance.docker_repo) | publish_docker_image.s())
+
+                    # Execute the chained tasks asynchronously
+                    result = task_chain.delay()
+
+                    return Response({"data": DockerfileBuildSerializer(saved_instance).data },status=202)
+
+                else:
+                    return Response({"message": "File is not valid", "errors": instance.errors}, status=400)
             else:
-                return Response({"message": "File is not valid", "errors": instance.errors}, status=400)
+                return Response({"message": "Username key 'docker_username' and password 'docker_password' for docker connection is missing."}, status=400)
 
 
         else:
@@ -92,11 +112,13 @@ def dockerfile_builds(request):
                 return Response({"message": "Docker Image is not found"},status = 404) 
             
             # Get dockerfile path
+            
             file_path = dockerfile_build_db.file
+            
 
-            # Try to delete file from local storage
+            # Try to delete file from local storage--file in database is object not a string
             try:
-                os.remove(file_path.path)
+                os.remove(str(file_path))
             except Exception as e:
                 return Response({"message": str(e)}, status=400)
 

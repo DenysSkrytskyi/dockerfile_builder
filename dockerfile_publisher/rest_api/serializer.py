@@ -6,17 +6,17 @@ from rest_framework import serializers
 class DockerfileBuildSerializer(serializers.ModelSerializer):
     class Meta:
         model = DockerfileBuild
-        fields =['id', 'username', 'file','image_id','status', 'created_at']
+        fields =['id', 'docker_username', 'docker_repo', 'file','image_id','status', 'created_at']
 
 
     def create(self,validated_data):
-
+    
         # Create file name
         current_time = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
         dockerfile_new_name = (
             validated_data['file'].name +
             '_' +
-            validated_data['username'] +
+            validated_data['docker_username'] +
             '_' +
             current_time
         )

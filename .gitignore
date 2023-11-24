@@ -5,3 +5,4 @@ dockerfile_publisher/dockerfile_publisher/dockerfiles/
 dockerfile_publisher/rest_api/__pycache__/
 dockerfile_publisher/rest_api/services/__pycache__/
 *.pyc
+.vscode/launch.json

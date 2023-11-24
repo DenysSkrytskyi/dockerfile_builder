@@ -32,13 +32,9 @@ For the purpose of this assignment, it can be assumed that the service and Docke
 - docker 
 
 #### Docker configuration:
-1. Login on to your docker hub  ```docker login```
-
-2. Update configurations to your docker hub repo in file ```dockerfile_publisher/rest_api/config.py``` 
-
-    ``` bash
-    DOCKER_HUB_REPO = "your_docker_hub_repo"
-    ```
+- Login on to your docker hub  ```docker login``` , in case you would like local docker deamon
+OR
+- Add 'password' or 'docker_password' to POST request 
 
 #### Steps to RUN the project
 

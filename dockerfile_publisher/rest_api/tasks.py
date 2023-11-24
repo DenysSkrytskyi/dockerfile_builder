@@ -9,7 +9,7 @@ from .config import DOCKER_HUB_REPO
 from .models import DockerfileBuild
 
 @shared_task
-def build_docker_image(dockerfile_path, dockerfile_build_id):
+def build_docker_image(dockerfile_path, dockerfile_build_id, docker_username, docker_pass, docker_repo):
 
     print("========Task: build_docker_image========")
     print(f'File that is used for a build {dockerfile_path}')
@@ -17,9 +17,15 @@ def build_docker_image(dockerfile_path, dockerfile_build_id):
     # Create Docker client
     client = docker.from_env()
     
+    try:
+        client.login(username=docker_username, password=docker_pass)
+    except docker.errors.APIError as e:
+        print(f"Error logging in to Docker registry: {e}")
+
+
     # Create tag
     current_time = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
-    tag = f"{DOCKER_HUB_REPO}:{current_time}" 
+    tag = f"{docker_repo}:{current_time}" 
 
     # Build the Image
     try:
