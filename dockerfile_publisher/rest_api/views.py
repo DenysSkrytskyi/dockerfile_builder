@@ -16,8 +16,6 @@ from .models import DockerfileBuild
 @api_view(["POST","GET","DELETE"])
 def dockerfile_builds(request):
 
-    print("test")
-
     if request.method == "POST":
 
         if request.headers["Content-Type"].split(';')[0] == "multipart/form-data":
@@ -26,9 +24,6 @@ def dockerfile_builds(request):
             docker_username = request.data.get('docker_username')
             docker_password = request.data.get('docker_password')
             exclude_password_keys = ['docker_password', 'password']
-
-            print(docker_username)
-            print(docker_password)
 
             payload_no_pass={}
             for key, val in request.data.items():
