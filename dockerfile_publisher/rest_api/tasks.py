@@ -4,7 +4,6 @@ from celery import shared_task
 import docker
 
 from .services.build_status_update import update_status_by_imageId, update_status_imageId_by_build_id
-from .config import DOCKER_HUB_REPO
 
 from .models import DockerfileBuild
 

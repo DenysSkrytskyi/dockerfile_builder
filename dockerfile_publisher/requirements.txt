@@ -4,3 +4,6 @@ djangorestframework
 docker
 celery
 redis
+
+#WSGI
+gunicorn
